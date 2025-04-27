@@ -1,12 +1,10 @@
 public class BankAccount {
-    private String accountNumber;
-    private String accountHolder;
+    private final String accountNumber;
     private double balance;
 
     // Constructor
-    public BankAccount(String accountNumber, String accountHolder, double balance) {
+    public BankAccount(final String accountNumber, final double balance) {
         this.accountNumber = accountNumber;
-        this.accountHolder = accountHolder;
         this.balance = balance;
     }
 
@@ -15,24 +13,7 @@ public class BankAccount {
         return accountNumber;
     }
 
-    public String getAccountHolder() {
-        return accountHolder;
-    }
-
     public double getBalance() {
         return balance;
-    }
-
-    // Mutator methods
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public void setAccountHolder(String accountHolder) {
-        this.accountHolder = accountHolder;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
     }
 }
