@@ -19,7 +19,7 @@ public class PasswordEncryptionServiceAns {
 		return Arrays.equals(encryptedPassword, encryptedAttemptedPassword);
 	}
 
-	public static byte[] getEncryptedPassword(String password, byte[] salt)
+	public static byte[] getEncryptedPassword(final String password, final byte[] salt)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
 		// PBKDF2 with SHA-1 as the hashing algorithm. 
@@ -45,7 +45,7 @@ public class PasswordEncryptionServiceAns {
 
 		// Generate a 8 byte (64 bit) salt as recommended by RSA PKCS5
 		SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-		byte[] salt = new byte[8];
+		byte[] salt = new byte[16];
 		random.nextBytes(salt);
 
 		return salt;

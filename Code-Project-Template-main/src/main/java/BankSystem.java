@@ -4,12 +4,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Base64;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.sql.*;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 
 public class BankSystem {
 
@@ -28,11 +31,13 @@ public class BankSystem {
 
 		// While loop to present menu details
 		while (true) {
+			System.out.println();
 			System.out.println("*** Main Menu ***");
 			System.out.println("\n1. Create Account");
 			System.out.println("2. Login");
 			System.out.println("3. Exit");
 			System.out.print("Select an option: ");
+			
 			// Try to check that the user enters a valid number
 			try {
 				int choice = scanner.nextInt();
@@ -41,6 +46,7 @@ public class BankSystem {
 				switch (choice) {
 				case 1: {
 					// Create Account
+					System.out.println();
 					System.out.println("Create Account");
 					// Clear Scanner Buffer
 					scanner.nextLine();
@@ -50,6 +56,7 @@ public class BankSystem {
 				}
 				case 2: {
 					// Login to Account
+					System.out.println();
 					System.out.println("Login Account");
 					scanner.nextLine();
 					login();
@@ -57,11 +64,13 @@ public class BankSystem {
 				}
 				case 3: {
 					// Terminate Program
+					System.out.println();
 					System.out.println("Thank you for using the ATU Bank System. Goodbye!");
 					return;
 				}
 				default:
 					//
+					System.out.println();
 					System.out.println("Invalid option. Try again.");
 				}
 
@@ -94,6 +103,7 @@ public class BankSystem {
 		try {
 			// Get user to enter their Account Email
 			while (true) {
+				System.out.println();
 				System.out.print("Enter your Account Email ");
 				// Validate that the user has entered a string
 				if (scanner.hasNextLine()) {
@@ -109,13 +119,16 @@ public class BankSystem {
 						// Break out of while loop
 						break;
 					} else if (!available) {
+						System.out.println();
 						System.out.println("An account with this email already exists. Please use a different email.");
 					} else {
+						System.out.println();
 						System.out.println("Invalid input. Please enter a valid email.");
 					}
 				}
 			}
 			while (true) {
+				System.out.println();
 				System.out.print("Enter your password ");
 				// Validate that the user has entered a string
 				if (scanner.hasNextLine()) {
@@ -123,20 +136,24 @@ public class BankSystem {
 					// Check that password is in the correct format
 					Matcher matcher = passwordPattern.matcher(password);
 					if (!password.isEmpty() && matcher.matches()) {
+						System.out.println();
 						System.out.println("Password: " + password);
 						// Break out of while loop
 						break;
 					} else {
+						System.out.println();
 						// Inform user of the correct format needed
 						System.out.println("Invalid input. Please enter a password that contains the following.");
 						System.out.println("At Least 8 Characters long");
 						System.out.println("1 Captial Letter");
 						System.out.println("1 Special Character");
+						System.out.println();
 					}
 				}
 			}
 
 			while (true) {
+				System.out.println();
 				System.out.print("Enter initial deposit: ");
 				// Check that user has entered a valid number
 				if (scanner.hasNextDouble()) {
@@ -144,11 +161,13 @@ public class BankSystem {
 					scanner.nextLine();
 					// Check that the number is not less than 0
 					if (balance >= 0) {
+						System.out.println();
 						System.out.println("Balance: " + balance);
 						break;
 					}
 					// Inform the user that the input is invalid
 				} else {
+					System.out.println();
 					System.out.println("Invalid input. Please enter a number.");
 					scanner.nextLine();
 				}
@@ -157,18 +176,26 @@ public class BankSystem {
 			Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
 			// Create a prepared statement to prevent invalid data being submitted to db
 			// and prevent injection attack
-			final String sql = "INSERT INTO customers (`email`, `password`, `balance`) VALUES (?, ?, ?)";
+			final String sql = "INSERT INTO customers (email, password, balance, salt) VALUES (?, ?, ?, ?)";
 			PreparedStatement query = conn.prepareStatement(sql);
+			final byte[] salt = PasswordEncryptionServiceAns.generateSalt();
+			final byte[] encryptedPassword = PasswordEncryptionServiceAns.getEncryptedPassword(password, salt);
 			// Attach users details to the prepared statement
 			query.setString(1, email);
-			query.setString(2, password);
+			query.setString(2, Base64.getEncoder().encodeToString(encryptedPassword));
 			query.setDouble(3, balance);
+			query.setString(4, Base64.getEncoder().encodeToString(salt));
 			// Execute SQL statement
 			query.executeUpdate();
+			System.out.println();
 			System.out.println("Account successfully created for " + email);
 			// Catch exceptions that may have occurred when selecting email, password or
 			// balance
 			// Or any issue with the SQL query or DB connection
+		} catch (NoSuchAlgorithmException e) {
+			System.out.println("An invalid value was entered. Try Again and Please re-enter the data correctly");
+		} catch (InvalidKeySpecException e) {
+			System.out.println("An invalid value was entered. Try Again and Please re-enter the data correctly");
 		} catch (InputMismatchException e) {
 			System.out.println("An invalid value was entered. Try Again and Please re-enter the data correctly");
 		} catch (NullPointerException e) {
@@ -207,23 +234,28 @@ public class BankSystem {
 						email = scanner.nextLine();
 						Matcher matcher = pattern.matcher(email);
 						if (!email.isEmpty() && matcher.matches()) {
+							System.out.println();
 							System.out.println("Account Email: " + email);
 							break;
 						} else {
+							System.out.println();
 							System.out.println("Invalid input. Please enter a valid AccountNo.");
 						}
 					}
 				}
 				// Get the user to enter a password
 				while (true) {
+					System.out.println();
 					System.out.print("Enter your password ");
 					// Check that they have entered a string
 					if (scanner.hasNextLine()) {
 						password = scanner.nextLine();
 						if (!password.isEmpty()) {
+							System.out.println();
 							System.out.println("Password: " + password);
 							break;
 						} else {
+							System.out.println();
 							System.out.println("Invalid input. Please enter a valid name.");
 						}
 					}
@@ -233,30 +265,52 @@ public class BankSystem {
 				final Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
 				// Create an SQL query which finds a user with the same email
 				// And password that they have entered
-				final String sql = "Select * FROM customers WHERE email = ? AND password = ?;";
-				PreparedStatement query = conn.prepareStatement(sql);
-				query.setString(1, email);
-				query.setString(2, password);
-				ResultSet rs = query.executeQuery();
-				// check user matches
-				// If a record is returned then the correct details have been entered
-				if (rs.next()) {
-					System.out.println("Login successful!");
-//					double balance = rs.getDouble("balance");
-//					BankAccount ba = new BankAccount(email, balance);
-					// Call the valid Customer method
-					validCustomer(email);
-					// When logged out of the validCustomer method
-					// break out of the login method and return to the main method
-					break;
+				final String sqlSalt = "Select password, salt FROM customers WHERE email = ?;";
+				PreparedStatement querySalt = conn.prepareStatement(sqlSalt);
+				querySalt.setString(1, email);
+
+				ResultSet rsSalt = querySalt.executeQuery();
+				if (rsSalt.next()) {
+					final byte[] salt = Base64.getDecoder().decode(rsSalt.getString("salt"));
+					final byte[] encryptedPassword = Base64.getDecoder().decode(rsSalt.getString("password"));
+					if (PasswordEncryptionServiceAns.authenticate(password, encryptedPassword, salt)) {
+						final String sql = "Select * FROM customers WHERE email = ? AND password = ?;";
+						PreparedStatement query = conn.prepareStatement(sql);
+
+						final byte[] loggedInPass = PasswordEncryptionServiceAns.getEncryptedPassword(password, salt);
+						query.setString(1, email);
+						query.setString(2, Base64.getEncoder().encodeToString(loggedInPass));
+						ResultSet rs = query.executeQuery();
+						// check user matches
+						// If a record is returned then the correct details have been entered
+						if (rs.next()) {
+							System.out.println();
+							System.out.println("Login successful!");
+//						double balance = rs.getDouble("balance");
+//						BankAccount ba = new BankAccount(email, balance);
+							// Call the valid Customer method
+							validCustomer(email);
+							// When logged out of the validCustomer method
+							// break out of the login method and return to the main method
+							break;
+						} else {
+							// If user has entered incorrect details inform
+							// the user that they have entered incorrect details
+							System.out.println();
+							System.out.println("Invalid username or password.");
+							// Reduce the number of attempts they have left by 1
+							attempts--;
+						}
+					}
 				} else {
-					// If user has entered incorrect details inform
-					// the user that they have entered incorrect details
+					System.out.println();
 					System.out.println("Invalid username or password.");
-					// Reduce the number of attempts they have left by 1
 					attempts--;
 				}
-
+			} catch (NoSuchAlgorithmException e) {
+				System.out.println("An invalid value was entered. Try Again and Please re-enter the data correctly");
+			} catch (InvalidKeySpecException e) {
+				System.out.println("An invalid value was entered. Try Again and Please re-enter the data correctly");
 			} catch (InputMismatchException e) {
 				System.out.println("An invalid value was entered. Try Again and Please re-enter the data correctly");
 			} catch (NullPointerException e) {
@@ -271,9 +325,12 @@ public class BankSystem {
 				System.out.println("Database error occurred.");
 			} catch (Exception e) {
 				System.out.println("An Error occurred try again.");
+			} finally {
+				// Inform user the number of attempts remaining
+				System.out.println();
+				System.out.println("Attempts remaining " + attempts);
 			}
-			// Inform user the number of attempts remaining
-			System.out.println("Attempts remaining " + attempts);
+
 		}
 	}
 
@@ -301,6 +358,7 @@ public class BankSystem {
 					// Allow the user to enter they amount that they want to deposit
 					double depositAmount;
 					while (true) {
+						System.out.println();
 						System.out.print("Enter deposit amount: ");
 						// Check that user has entered a valid number
 						if (scanner.hasNextDouble()) {
@@ -312,6 +370,7 @@ public class BankSystem {
 							}
 							// Inform the user that the input is invalid
 						} else {
+							System.out.println();
 							System.out.println("Invalid input. Please enter a number.");
 							scanner.next();
 						}
@@ -322,6 +381,7 @@ public class BankSystem {
 				case 3:
 					double withdrawAmount;
 					while (true) {
+						System.out.println();
 						System.out.print("Enter withdrawal amount: ");
 						// Check that user has entered a valid number
 						if (scanner.hasNextDouble()) {
@@ -333,6 +393,7 @@ public class BankSystem {
 							}
 							// Inform the user that the input is invalid
 						} else {
+							System.out.println();
 							System.out.println("Invalid input. Please enter a number.");
 							scanner.next();
 						}
@@ -342,10 +403,12 @@ public class BankSystem {
 					break;
 				case 4:
 					// Log out of users account and return to menu
+					System.out.println();
 					System.out.println("Logging out...");
 					return;
 				default:
 					// User entered an invalid number
+					System.out.println();
 					System.out.println("Invalid option. Try again.");
 				}
 
@@ -353,6 +416,7 @@ public class BankSystem {
 			} catch (InputMismatchException e) {
 				// Catch a InputMismatchException if user enters a letter or
 				// special character instead of a number
+				System.out.println();
 				System.out.println("Invalid Entry. Please enter a valid integer number");
 				scanner.next();
 			}
@@ -425,8 +489,10 @@ public class BankSystem {
 
 			if (rs.next()) {
 				// Display the users balance
+				System.out.println();
 				System.out.println("Current balance: $" + rs.getDouble("balance"));
 			} else {
+				System.out.println();
 				System.out.println("User not found.");
 			}
 			// If an exception is thrown then inform the user that an error has occurred
@@ -473,6 +539,7 @@ public class BankSystem {
 			// And they are withdrawing more than their balance
 			// return to menu
 			if (!isDeposit && amount > currentBalance) {
+				System.out.println();
 				System.out.println("Insufficient funds.");
 				return;
 			}
@@ -495,6 +562,7 @@ public class BankSystem {
 			query2.setString(2, email);
 			query2.executeUpdate();
 			// Display their balance
+			System.out.println();
 			System.out.println("successful! New balance: $" + newBalance);
 			// Catch any exception that has occurred
 		} catch (ArithmeticException e) {
