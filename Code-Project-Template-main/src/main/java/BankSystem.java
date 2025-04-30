@@ -1,9 +1,4 @@
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Base64;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -11,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.sql.*;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 public class BankSystem {
@@ -98,8 +92,9 @@ public class BankSystem {
 		final Pattern pattern = Pattern.compile(EMAILREGEX);
 		// Check that enetred password matches following format
 		// Letterkenny#2025
-		final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}+$";
-		final Pattern passwordPattern = Pattern.compile(PASSWORD_REGEX);
+		
+		final String P_REGEX = "^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}+$";
+		final Pattern passwordPattern = Pattern.compile(P_REGEX);
 		try {
 			// Get user to enter their Account Email
 			while (true) {
@@ -187,6 +182,7 @@ public class BankSystem {
 			query.setString(4, Base64.getEncoder().encodeToString(salt));
 			// Execute SQL statement
 			query.executeUpdate();
+			query.close();
 			System.out.println();
 			System.out.println("Account successfully created for " + email);
 			// Catch exceptions that may have occurred when selecting email, password or
@@ -270,6 +266,7 @@ public class BankSystem {
 				querySalt.setString(1, email);
 
 				ResultSet rsSalt = querySalt.executeQuery();
+				querySalt.close();
 				if (rsSalt.next()) {
 					final byte[] salt = Base64.getDecoder().decode(rsSalt.getString("salt"));
 					final byte[] encryptedPassword = Base64.getDecoder().decode(rsSalt.getString("password"));
@@ -281,6 +278,7 @@ public class BankSystem {
 						query.setString(1, email);
 						query.setString(2, Base64.getEncoder().encodeToString(loggedInPass));
 						ResultSet rs = query.executeQuery();
+						query.close();
 						// check user matches
 						// If a record is returned then the correct details have been entered
 						if (rs.next()) {
@@ -435,6 +433,7 @@ public class BankSystem {
 			PreparedStatement query = conn.prepareStatement(sql);
 			query.setString(1, email);
 			final ResultSet rs = query.executeQuery();
+			query.close();
 
 			if (rs.next()) {
 				// If a record is returned then the email is in use
@@ -486,6 +485,7 @@ public class BankSystem {
 			PreparedStatement query = conn.prepareStatement(sql);
 			query.setString(1, email);
 			final ResultSet rs = query.executeQuery();
+			query.close();
 
 			if (rs.next()) {
 				// Display the users balance
@@ -527,6 +527,7 @@ public class BankSystem {
 			PreparedStatement query = conn.prepareStatement(sql);
 			query.setString(1, email);
 			final ResultSet rs = query.executeQuery();
+			query.close();
 
 			if (rs.next()) {
 				// set the users current balance so that
@@ -561,6 +562,7 @@ public class BankSystem {
 			query2.setDouble(1, newBalance);
 			query2.setString(2, email);
 			query2.executeUpdate();
+			query2.close();
 			// Display their balance
 			System.out.println();
 			System.out.println("successful! New balance: $" + newBalance);
