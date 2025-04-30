@@ -8,8 +8,13 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class PasswordEncryptionServiceAns {
+	
+	private PasswordEncryptionServiceAns() 
+	{
 
-	public static boolean authenticate(String attemptedPassword, byte[] encryptedPassword, byte[] salt)
+    }
+
+	protected static boolean authenticate(String attemptedPassword, byte[] encryptedPassword, byte[] salt)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
 		// Encrypt the clear-text password using the same salt that was used to encrypt the original password
@@ -19,7 +24,7 @@ public class PasswordEncryptionServiceAns {
 		return Arrays.equals(encryptedPassword, encryptedAttemptedPassword);
 	}
 
-	public static byte[] getEncryptedPassword(final String password, final byte[] salt)
+	protected static byte[] getEncryptedPassword(final String password, final byte[] salt)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
 		// PBKDF2 with SHA-1 as the hashing algorithm. 
@@ -40,7 +45,7 @@ public class PasswordEncryptionServiceAns {
 		return f.generateSecret(spec).getEncoded();
 	}
 
-	public static byte[] generateSalt() throws NoSuchAlgorithmException {
+	protected static byte[] generateSalt() throws NoSuchAlgorithmException {
 		// VERY important to use SecureRandom instead of just Random
 
 		// Generate a 8 byte (64 bit) salt as recommended by RSA PKCS5
