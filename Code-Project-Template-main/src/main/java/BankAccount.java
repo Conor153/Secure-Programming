@@ -1,19 +1,25 @@
 public class BankAccount {
-    private final String accountNumber;
-    private double balance;
+	private final String accountEmail;
+	private final String password;
+	private double balance;
 
-    // Constructor
-    public BankAccount(final String accountNumber, final double balance) {
-        this.accountNumber = accountNumber;
-        this.balance = balance;
-    }
+	// Constructor
+	public BankAccount(final String accountEmail, final double balance, final String password) {
+		this.accountEmail = accountEmail;
+		this.balance = balance;
+		this.password = password;
+	}
 
-    // Accessor methods
-    public String getAccountNumber() {
-        return accountNumber;
-    }
+	// Accessor methods
+	public String getAccountEmail() {
+		return accountEmail;
+	}
 
-    public double getBalance() {
-        return balance;
-    }
+	public double getBalance() {
+		return balance;
+	}
+
+	public String getPassword() {
+		return password;
+	}
 }
