@@ -92,7 +92,6 @@ public class BankSystem {
 		final Pattern pattern = Pattern.compile(EMAILREGEX);
 		// Check that enetred password matches following format
 		// Letterkenny#2025
-		
 		final String P_REGEX = "^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}+$";
 		final Pattern passwordPattern = Pattern.compile(P_REGEX);
 		try {
@@ -266,7 +265,7 @@ public class BankSystem {
 				querySalt.setString(1, email);
 
 				ResultSet rsSalt = querySalt.executeQuery();
-				querySalt.close();
+				
 				if (rsSalt.next()) {
 					final byte[] salt = Base64.getDecoder().decode(rsSalt.getString("salt"));
 					final byte[] encryptedPassword = Base64.getDecoder().decode(rsSalt.getString("password"));
@@ -278,10 +277,13 @@ public class BankSystem {
 						query.setString(1, email);
 						query.setString(2, Base64.getEncoder().encodeToString(loggedInPass));
 						ResultSet rs = query.executeQuery();
-						query.close();
+
+						
 						// check user matches
 						// If a record is returned then the correct details have been entered
 						if (rs.next()) {
+							querySalt.close();
+							query.close();
 							System.out.println();
 							System.out.println("Login successful!");
 //						double balance = rs.getDouble("balance");
@@ -438,10 +440,12 @@ public class BankSystem {
 			if (rs.next()) {
 				// If a record is returned then the email is in use
 				// Return false
+				query.close();
 				return false;
 			} else {
 				// Else if no record is returned the email is not in use
 				// Return true
+				query.close();
 				return true;
 			}
 			// If an exception is thrown then inform the user of an error
@@ -491,9 +495,11 @@ public class BankSystem {
 				// Display the users balance
 				System.out.println();
 				System.out.println("Current balance: $" + rs.getDouble("balance"));
+				query.close();
 			} else {
 				System.out.println();
 				System.out.println("User not found.");
+				query.close();
 			}
 			// If an exception is thrown then inform the user that an error has occurred
 		} catch (InputMismatchException e) {
@@ -534,6 +540,7 @@ public class BankSystem {
 				// it can add to the deposit
 				// or subtract the withdraw
 				currentBalance = rs.getDouble("balance");
+				query.close();
 			}
 
 			// If the user is withdrawing
