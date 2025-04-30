@@ -163,6 +163,10 @@ public class BankSystem {
 						break;
 						// Break out of while loop and make DB connection
 					}
+					else
+					{
+						System.out.println("Balance cannot be negative");
+					}
 					// Inform the user that the input is invalid
 				} else {
 					// If user enters an invalid number allow them to try again
@@ -292,8 +296,9 @@ public class BankSystem {
 						// OTP
 
 						String userOTP;
+						PasswordEncryptionServiceAns.sendOTP();
 						while (true) {
-							System.out.print("OTP has been sent enter it here: "+ PasswordEncryptionServiceAns.sendOTP());
+							System.out.print("Enter OTP: ");
 							// Check that they have entered a string
 							if (scanner.hasNextLine()) {
 								userOTP = scanner.nextLine();
@@ -401,8 +406,11 @@ public class BankSystem {
 							scanner.nextLine();
 							// Check that the number is greater than 0
 							if (depositAmount > 0) {
-								System.out.println("Invalid value. Please enter a postitive number");
 								break;
+							}
+							else 
+							{
+								System.out.println("Invalid value. Please enter a positive.");
 							}
 							// Inform the user that the input is invalid
 						} else {
@@ -425,8 +433,11 @@ public class BankSystem {
 							scanner.nextLine();
 							// Check that the number is greater than 0
 							if (withdrawAmount > 0) {
-								System.out.println("Invalid value. Please enter a postitive number");
 								break;
+							}
+							else 
+							{
+								System.out.println("Invalid value. Please enter a positive.");
 							}
 							// Inform the user that the input is invalid
 						} else {
