@@ -4,22 +4,22 @@ public class BankAccount {
 	private double balance;
 
 	// Constructor
-	public BankAccount(final String accountEmail, final double balance, final String password) {
+	protected BankAccount(final String accountEmail, final double balance, final String password) {
 		this.accountEmail = accountEmail;
 		this.balance = balance;
 		this.password = password;
 	}
 
 	// Accessor methods
-	public String getAccountEmail() {
+	protected String getAccountEmail() {
 		return accountEmail;
 	}
 
-	public double getBalance() {
+	protected double getBalance() {
 		return balance;
 	}
 
-	public String getPassword() {
+	protected String getPassword() {
 		return password;
 	}
 }

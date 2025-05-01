@@ -344,6 +344,9 @@ public class BankSystem {
 					System.out.println("User does not exist");
 					attempts--;
 				}
+				// Inform user the number of attempts remaining
+				System.out.println();
+				System.out.println("Attempts remaining " + attempts);
 				// Catch any exceptions that may occur
 			} catch (NoSuchAlgorithmException e) {
 				System.out.println("An invalid value was entered. Try Again and Please re-enter the data correctly");
@@ -363,11 +366,6 @@ public class BankSystem {
 				System.out.println("Database error occurred.");
 			} catch (Exception e) {
 				System.out.println("An Error occurred try again.");
-			} finally {
-				// Inform user the number of attempts remaining
-				System.out.println();
-				System.out.println("Attempts remaining " + attempts);
-
 			}
 
 		}

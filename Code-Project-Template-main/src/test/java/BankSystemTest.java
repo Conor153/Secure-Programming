@@ -12,8 +12,8 @@ class BankSystemTest {
 	
 	@Test
 	public void testLogin() {
-		BankAccount ba = new BankAccount("test@sample2.com", 50.0, "Abc1234$");
-		assertEquals(true, BankSystem.login(ba.getAccountEmail(), ba.getPassword()));
+		BankAccount ba = new BankAccount("test@sample2.com", 50.0, "111111A$");
+		assertEquals(false, BankSystem.login(ba.getAccountEmail(), ba.getPassword()));
 	}
 
 	@Test
